@@ -2,9 +2,11 @@
 
 Findings from a frontend UI-bug audit of `screen.html`/`screen.js` (2026-07-22, 32.6KB, no `assets/*.js`/`*.css`, no `settings.html`). Ranked by severity/confidence. No code changes have been made — this is a catalog for follow-up work.
 
-## 1. Five inline event handlers reference functions never exposed on `window` (Critical)
+## 1. Five inline event handlers reference functions never exposed on `window` (Critical) — ✅ FIXED
 
-`screen.js` wraps everything in `(function(){'use strict'; ... })();` (lines 3-4/681-682). Functions declared inside are invisible to inline `onclick`/`onchange` attributes unless explicitly assigned to `window`. The exposure list at the bottom (`screen.js:672-679`) only covers `tiSetAudioMode`, `tiSkipAudio`, `tiHandleAudioDrop`, `tiHandleAudioFile`, `tiClearAudio`, `tiBuild`, `tiToggleAudioSection`, `tiReset`. Missing:
+**Status:** Fixed in PR #30 (commit 3513c6e). Regression test added to prevent recurrence.
+
+`screen.js` wraps everything in `(function(){'use strict'; ... })();` for scope isolation. Functions declared inside are invisible to inline `onclick`/`onchange` attributes unless explicitly assigned to `window`. The exposure list at the end of `screen.js` was missing:
 
 - `tiHandleCover` — `screen.html:42` (album-cover file input `onchange`)
 - `tiClearCover` — `screen.html:44` ("Remove" cover button)
@@ -12,7 +14,11 @@ Findings from a frontend UI-bug audit of `screen.html`/`screen.js` (2026-07-22, 
 - `tiHandleAudioUrl` — `screen.html:125` ("Download Audio" button)
 - `tiMergePair` — dynamically generated, `screen.js:615` (each piano-pair row's "Merge" button)
 
-**Failure scenario:** Clicking "Choose image…" to pick an album cover throws `tiHandleCover is not defined` and silently does nothing. Clicking "YouTube URL", "Download Audio", or any piano-pair "Merge" button all throw and no-op. This breaks album-cover upload, the entire YouTube-audio-URL flow, and the entire piano LH/RH merge action.
+**What was broken:** Album-cover upload, YouTube-audio-URL flow, piano LH/RH merge action.
+
+**How it was fixed:** Added missing function exposures to the window object and created `tests/test_regression_issue_30.py` to prevent this regression.
+
+**See also:** [CLAUDE.md — Inline Event Handlers Require Window Exposure](CLAUDE.md#1-inline-event-handlers-require-window-exposure)
 
 ## 2. Piano LH/RH merge section never populated on initial screen load (High)
 

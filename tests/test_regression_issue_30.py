@@ -65,6 +65,11 @@ class TestIssue30Regression(unittest.TestCase):
         self.assertIn('tiHandleAudioUrl', self.screen_js_content,
                       "tiHandleAudioUrl function definition required")
 
+    def test_piano_merge_handler_exposed(self):
+        """tiMergePair must be exposed for dynamically-generated merge buttons."""
+        self.assertIn('window.tiMergePair', self.screen_js_content,
+                      "tiMergePair not exposed to window object")
+
 
 if __name__ == '__main__':
     unittest.main()

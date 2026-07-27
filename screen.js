@@ -680,6 +680,7 @@ window.tiHandleCover     = tiHandleCover;
 window.tiClearCover      = tiClearCover;
 window.tiBuild           = tiBuild;
 window.tiToggleAudioSection = tiToggleAudioSection;
+window.tiMergePair       = tiMergePair;
 window.tiReset           = tiReset;
 
 })();
