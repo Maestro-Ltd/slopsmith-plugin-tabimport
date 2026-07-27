@@ -38,16 +38,24 @@ class TestIssue30Regression(unittest.TestCase):
     def _extract_ti_functions_from_inline_handlers(self):
         """Extract all Tab Import functions (ti*) referenced in inline event handlers.
 
+        Parses all on* event attributes (onclick, onchange, ondrop, onkeydown, etc.)
+        and supports both single and double-quoted attribute values.
+
         Returns:
-            set: Tab Import function names found in onclick/onchange/ondrop attributes.
+            set: Tab Import function names found in inline event handlers.
         """
         # Extract all inline event handler strings
-        inline_pattern = r'on(?:click|change|drop|drag[a-z]*)\s*=\s*"([^"]*)"'
-        inline_handlers = re.findall(inline_pattern, self.screen_html_content)
+        # Matches: on<eventName>="handler" or on<eventName>='handler'
+        # Captures handler body in group 1 (double-quoted) or group 2 (single-quoted)
+        inline_pattern = r'on\w+\s*=\s*"([^"]*)"|on\w+\s*=\s*\'([^\']*)\''
+        matches = re.finditer(inline_pattern, self.screen_html_content, re.IGNORECASE)
 
         # Extract Tab Import function names from handler strings
         ti_functions = set()
-        for handler in inline_handlers:
+        for match in matches:
+            # Get the handler body from whichever group matched (double or single quote)
+            handler = match.group(1) if match.group(1) is not None else match.group(2)
+
             # Extract all function calls like funcName(...) or obj.method(...)
             func_matches = re.findall(r'(?:\w+\.)?(\w+)\s*\(', handler)
             # Keep only Tab Import functions (those starting with 'ti')
