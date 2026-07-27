@@ -671,11 +671,16 @@ async function tiMergePair(idx) {
 // Expose functions called from inline HTML event handlers
 window.tiSetAudioMode    = tiSetAudioMode;
 window.tiSkipAudio       = tiSkipAudio;
+window.tiSetAudioInputMode = tiSetAudioInputMode;
 window.tiHandleAudioDrop = tiHandleAudioDrop;
 window.tiHandleAudioFile = tiHandleAudioFile;
+window.tiHandleAudioUrl  = tiHandleAudioUrl;
 window.tiClearAudio      = tiClearAudio;
+window.tiHandleCover     = tiHandleCover;
+window.tiClearCover      = tiClearCover;
 window.tiBuild           = tiBuild;
 window.tiToggleAudioSection = tiToggleAudioSection;
+window.tiMergePair       = tiMergePair;
 window.tiReset           = tiReset;
 
 })();
