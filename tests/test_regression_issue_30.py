@@ -35,6 +35,27 @@ class TestIssue30Regression(unittest.TestCase):
         with open(screen_js_path, 'r') as f:
             cls.screen_js_content = f.read()
 
+    def _extract_ti_functions_from_inline_handlers(self):
+        """Extract all Tab Import functions (ti*) referenced in inline event handlers.
+
+        Returns:
+            set: Tab Import function names found in onclick/onchange/ondrop attributes.
+        """
+        # Extract all inline event handler strings
+        inline_pattern = r'on(?:click|change|drop|drag[a-z]*)\s*=\s*"([^"]*)"'
+        inline_handlers = re.findall(inline_pattern, self.screen_html_content)
+
+        # Extract Tab Import function names from handler strings
+        ti_functions = set()
+        for handler in inline_handlers:
+            # Extract all function calls like funcName(...) or obj.method(...)
+            func_matches = re.findall(r'(?:\w+\.)?(\w+)\s*\(', handler)
+            # Keep only Tab Import functions (those starting with 'ti')
+            for func in func_matches:
+                if func.startswith('ti'):
+                    ti_functions.add(func)
+        return ti_functions
+
     def test_all_inline_handlers_are_exposed(self):
         """All Tab Import functions in inline handlers must be exposed to window.
 
@@ -42,20 +63,8 @@ class TestIssue30Regression(unittest.TestCase):
         event handlers (onclick, onchange, ondrop, etc.) and verify each
         Tab Import function (ti*) has a corresponding window.name = name assignment.
         """
-        # Extract all function calls from inline event handlers
-        # Matches: onclick="funcName(...)", onchange="funcName(...)", etc.
-        inline_pattern = r'on(?:click|change|drop|drag[a-z]*)\s*=\s*"([^"]*)"'
-        inline_handlers = re.findall(inline_pattern, self.screen_html_content)
-
-        # Extract Tab Import function names from handler strings (those starting with 'ti')
-        functions_in_html = set()
-        for handler in inline_handlers:
-            # Extract all function calls like funcName(...) or obj.method(...)
-            func_matches = re.findall(r'(?:\w+\.)?(\w+)\s*\(', handler)
-            # Keep only Tab Import functions (those starting with 'ti')
-            for func in func_matches:
-                if func.startswith('ti'):
-                    functions_in_html.add(func)
+        # Extract all Tab Import functions from inline handlers
+        functions_in_html = self._extract_ti_functions_from_inline_handlers()
 
         # Extract all window exposures from screen.js
         # Matches: window.funcName = funcName;
@@ -80,18 +89,8 @@ class TestIssue30Regression(unittest.TestCase):
         This catches typos and accidental references to custom functions that don't exist.
         Built-in browser APIs are not checked here (those are always available).
         """
-        # Extract all function calls from inline handlers
-        inline_pattern = r'on(?:click|change|drop|drag[a-z]*)\s*=\s*"([^"]*)"'
-        inline_handlers = re.findall(inline_pattern, self.screen_html_content)
-
-        custom_functions_in_html = set()
-        for handler in inline_handlers:
-            # Find all function calls, extract just the function name
-            func_matches = re.findall(r'(?:\w+\.)?(\w+)\s*\(', handler)
-            # Keep only custom functions (those starting with 'ti')
-            for func in func_matches:
-                if func.startswith('ti'):
-                    custom_functions_in_html.add(func)
+        # Extract all Tab Import functions from inline handlers
+        custom_functions_in_html = self._extract_ti_functions_from_inline_handlers()
 
         # Extract all function definitions from screen.js
         # Matches: async function name(...) or function name(...)
