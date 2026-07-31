@@ -3,7 +3,7 @@
   "name": "Import Tab",
   "version": "1.0.0",
   "private": false,
-  "nav": { "label": "Import Tab", "screen": "tab-import" },
+  "nav": { "label": "Import Tab", "screen": "tab_import" },
   "screen": "screen.html",
   "script": "screen.js",
   "routes": "routes.py"
