@@ -1,5 +1,7 @@
 # Slopsmith Plugin: Import Tab
 
+> **The official Slopsmith project is no longer maintained.** [feedBack](https://github.com/got-feedBack/feedBack) is its successor — the equivalent Guitar Pro import functionality now lives in feedBack-plugin-feedpaker.
+
 A plugin for [Slopsmith](https://github.com/carochacs/slopsmith) that lets you drag and drop Guitar Pro files directly into the browser to create playable CDLC.
 
 ## Features
