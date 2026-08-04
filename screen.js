@@ -1,5 +1,4 @@
 // Tab Import plugin — screen.js
-
 (function () {
 'use strict';
 

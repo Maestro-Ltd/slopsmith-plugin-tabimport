@@ -671,7 +671,6 @@ def _build_sloppak(xml_paths, arrangement_names, audio_path, title, artist, albu
     finally:
         shutil.rmtree(work_dir, ignore_errors=True)
 
-
 def _find_sloppak_piano_pairs(dlc_dir: Path) -> list[dict]:
     """Scan dlc_dir for sloppaks that have two Keys arrangements named LH/RH."""
     import json
@@ -939,7 +938,6 @@ def _check_midi_deps(log) -> None:
                 )
         except Exception:
             pass  # gp2midi unavailable in the environment — skip the check
-
 
 def setup(app, context):
     global _get_dlc_dir, _extract_meta, _meta_db
